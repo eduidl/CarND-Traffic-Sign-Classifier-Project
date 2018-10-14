@@ -45,7 +45,7 @@ signs data set:
 
 Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
 
-!["writeup_images/train_data.png"]
+![](writeup_images/visualization.jpg)
 
 ### Design and Test a Model Architecture
 
