@@ -181,6 +181,7 @@ If an iterative approach was chosen:
 Here are five German traffic signs that I found on the web:
 
 | ![](writeup_images/test01.jpg) | ![](writeup_images/test02.jpg) | ![](writeup_images/test03.jpg) | ![](writeup_images/test04.jpg) | ![](writeup_images/test05.jpg)
+|:-:|:-:|:-:|:-:|:-:
 | General caution | Priority road | Speed limit (60km/h) | Ahead only | Road work
 
 - The 1st image may be difficult to classify because this is tilted. 
