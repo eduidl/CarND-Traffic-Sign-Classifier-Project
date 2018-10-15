@@ -51,6 +51,8 @@ Here is an exploratory visualization of the data set. It is a bar chart showing 
 
 #### 1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
 
+##### Preprocess
+
 I preprocessd the image data by 3 steps as follows.
 
 - Grayscale
@@ -78,27 +80,23 @@ def normalize(img):
     return (img - min_) / (max_ - min_) * 2 - 1
 ```
 
-| Input | Grayscale | Histogram Equailization | Normalization
-|:-:|:-:|:-:|:-:
-|
+| Process | Image
+|:-:|:-:
+| Original | ![](writeup_images/original.jpg)
+| Grayscale | ![](writeup_images/grayscale.jpg)
+| Histogram Equailization | ![](writeup_images/histogram_equalization.jpg)
+| Normalization | ![](writeup_images/normalization.jpg)
 
-As a first step, I decided to convert the images to grayscale because ...
+##### Data Augmentation
 
-Here is an example of a traffic sign image before and after grayscaling.
+I compared accuracy graph between training's and validation's, and I thought over-fitting occured.
+Therefore I decided to generate additional data.
 
-![alt text][image2]
-
-As a last step, I normalized the image data because ...
-
-I decided to generate additional data because ... 
-
-To add more data to the the data set, I used the following techniques because ... 
-
-Here is an example of an original image and an augmented image:
+To add more data to the the data set, I used mixup.
+Indeed, I tried rotation, noise addition, parallel displacement, scaling ..., however which did not well. Training accuracy becomes too low (about 20 %).
 
 ![alt text][image3]
 
-The difference between the original data set and the augmented data set is the following ... 
 
 
 #### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
@@ -185,8 +183,3 @@ For the first image, the model is relatively sure that this is a stop sign (prob
 
 
 For the second image ... 
-
-### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
-#### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
-
-
