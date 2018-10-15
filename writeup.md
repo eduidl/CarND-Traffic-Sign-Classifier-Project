@@ -92,8 +92,14 @@ def normalize(img):
 I compared accuracy graph between training's and validation's, and I thought over-fitting occured.
 Therefore I decided to generate additional data.
 
-To add more data to the the data set, I used mixup.
+To add more data to the the data set, I used only mixup.
 Indeed, I tried rotation, noise addition, parallel displacement, scaling ..., however which did not well. Training accuracy becomes too low (about 20 %).
+
+I did not try ...
+- Horizontal or vertical flipping
+  - Direction of traffic sign is significant.
+- Random cropping
+  - I think that very significant part may be cropped and signs would be undistinguishable.
 
 ![alt text][image3]
 
