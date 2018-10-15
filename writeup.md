@@ -1,4 +1,4 @@
-# **Traffic Sign Recognition** 
+# **Traffic Sign Recognition**
 
 ## Writeup
 
@@ -17,7 +17,7 @@ The goals / steps of this project are the following:
 * Summarize the results with a written report
 
 ## Rubric Points
-### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
+### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.
 
 ---
 ### Writeup / README
@@ -56,7 +56,7 @@ Here is an exploratory visualization of the data set. It is a bar chart showing 
 I preprocessd the image data by 3 steps as follows.
 
 - Grayscale
-  - Traffic signs can be distinguished from each other in grayscale from human eyes. Conversion into grayscale may enhance the robustness to lighting environments or lead to avoid over-fitting.
+  - Traffic signs can be distinguished from each other in grayscale from human eyes. Conversion into grayscale may enhance the robustness to lighting environments or lead to avoid over fitting.
 
 ```py
 def grayscale(img):
@@ -73,30 +73,50 @@ def equalize_hist(img):
 
 - Normalization
   - Generally, normalization has good effect to machine learning including deep learning.
-  
+
 ```py
 def normalize(img):
     min_, max_ = np.min(img), np.max(img)
     return (img - min_) / (max_ - min_) * 2 - 1
 ```
 
-| Process | Image
-|:-:|:-:
-| Original | ![](writeup_images/original.jpg)
-| Grayscale | ![](writeup_images/grayscale.jpg)
+| Process                 | Image                              |
+|:-----------------------:|:----------------------------------:|
+| (Original)              | ![](writeup_images/original.jpg)
+| Grayscale               | ![](writeup_images/grayscale.jpg)
 | Histogram Equailization | ![](writeup_images/histogram_equalization.jpg)
-| Normalization | ![](writeup_images/normalization.jpg)
+| Normalization           | ![](writeup_images/normalization.jpg)
 
 ##### Data Augmentation
 
-I compared accuracy graph between training's and validation's, and I thought over-fitting occured.
+I compared accuracy graph between training's and validation's, and I thought over fitting occured.
 Therefore I decided to generate additional data. As a result, I used mixup only.
 
 The following image is mixup example from `Speed limit (30km/h)` and `Children crossing`
 
 ![](writeup_images/mixup.jpg)
 
-Indeed, I tried rotation, noise addition, parallel displacement, scaling ..., however which did not well. Training accuracy becomes very low (about 20 %).
+```py
+from tqdm import tqdm
+
+alpha = 1.
+augmented_X = []
+augmented_y = []
+
+for _ in tqdm(range(5000)):
+    indexes = np.arange(n_train)
+    np.random.shuffle(indexes)
+    i, j = indexes[:2]
+    lambda_ = np.random.beta(alpha, alpha)
+    augmented_X.append(normalize(X_train[i] * lambda_ + X_train[j] * (1 - lambda_)))
+    augmented_y.append(y_one_hot_train[i] * lambda_ + y_one_hot_train[j] * (1 - lambda_))
+```
+
+Indeed, I tried other some techniques as follows, however which did not well.
+  - Rotation
+  - Noise addition (Gaussian noise, Salt and pepper noise)
+  - Parallel displacement
+  - Scaling
 
 I did not try ...
 - Horizontal or vertical flipping
@@ -104,50 +124,55 @@ I did not try ...
 - Random cropping
   - I think that very significant part may be cropped and signs would be undistinguishable.
 
-
-
-
 #### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
 My final model consisted of the following layers:
 
-| Layer         		|     Description	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
-| RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
- 
-
+| Layer           | Description
+|:---------------:|:-----------:
+| Input           | 32x32x1 grayscale image
+| Convolution 3x3 | 1x1 stride, `VALID` padding, batch normalization, outputs 28x28x6
+| ReLU            |
+| Max pooling     | 2x2 stride, outputs 14x14x6
+| Convolution 3x3 | 1x1 stride, `VALID` padding, batch normalization, outputs 10x10x16
+| ReLU            |
+| Max pooling     | 2x2 stride, outputs 5x5x16         |
+| Fully connected | inputs 400, batch normalization, outputs 120
+| ReLU            |
+| Dropout         | keep_prob=0.5
+| Fully connected | inputs 120, batch normalization, outputs 84
+| ReLU            |
+| Dropout         | keep_prob=0.5
+| Fully connected | inputs 84, batch normalization outputs 43
+| Softmax         |
 
 #### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
-To train the model, I used an ....
+To train the model, I used
+
+- Optimizer: Adam
+- Batch size: 128
+- Learning rate: 0.03
+- epochs = 50
 
 #### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* training set accuracy of 0.971
+* validation set accuracy of 0.975
+* test set accuracy of 0.952
 
 If an iterative approach was chosen:
 * What was the first architecture that was tried and why was it chosen?
+  * I tried LeNet-5 because I thought this was light model however sufficient complex model for classification of traffic sign. In tha kind of meaning, LeNet-5 is well-ballanced model.
 * What were some problems with the initial architecture?
+  * Validation Accuracy remained low comparing to training accuracy, which means over fitting occurred.
 * How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
+  * For prevention of over fitting, I introduced two dropout layer and batch normalization.
 * Which parameters were tuned? How were they adjusted and why?
+  * I increased epoch size to improve accuracy.
+  * Before using batch normalization, I lowered learning rate to 0.001 for prevention of under fitting. However, after using that, learger learning rate can be used.
 * What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
-
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
- 
 
 ### Test a Model on New Images
 
@@ -155,39 +180,44 @@ If a well known architecture was chosen:
 
 Here are five German traffic signs that I found on the web:
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
-
-The first image might be difficult to classify because ...
+| ![](writeup_images/test01.jpg) | ![](writeup_images/test02.jpg) | ![](writeup_images/test03.jpg) | ![](writeup_images/test04.jpg) | ![](writeup_images/test05.jpg)
+| Slippery road | Priority road | Speed limit (60km/h) | Ahead only | Road work
 
 #### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
 Here are the results of the prediction:
 
-| Image			        |     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Image                | Prediction            |
+|:--------------------:|:---------------------:|
+| Slippery road        | Wild animals crossing |
+| Priority road        | Priority road         |
+| Speed limit (60km/h) | Speed limit (60km/h)  |
+| Ahead only           | Ahead only            |
+| Road work            | Road work             |
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of 0.952
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+The code for making predictions on my final model is located in the 19th cell of the Ipython notebook.
+
+```py
+with tf.Session() as sess:
+    saver.restore(sess, tf.train.latest_checkpoint('.'))
+    top_k_outputs = sess.run(tf.nn.top_k(tf.nn.softmax(logits), k=5),
+                             feed_dict={x: test_images, keep_prob: 1.0, is_training: False})
+```
 
 For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
 
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+| Probability | Prediction |
+|:-----------:|:---------------------------------------------:|
+| .24         | Wild animals crossing |
+| .22         | General Caution           |
+| .07         | Y            |
+| .06         | Bumpy Road                   |
+| .05         | Slippery Road                    |
 
 
-For the second image ... 
+For the second image ...
