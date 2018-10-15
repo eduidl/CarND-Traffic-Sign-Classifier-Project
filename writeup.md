@@ -153,14 +153,14 @@ To train the model, I used
 - Optimizer: Adam
 - Batch size: 128
 - Learning rate: 0.03
-- epochs = 50
+- epochs = 100
 
 #### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
 My final model results were:
-* training set accuracy of 0.971
-* validation set accuracy of 0.975
-* test set accuracy of 0.952
+* training set accuracy of 0.983
+* validation set accuracy of 0.981
+* test set accuracy of 0.951
 
 If an iterative approach was chosen:
 * What was the first architecture that was tried and why was it chosen?
@@ -181,22 +181,23 @@ If an iterative approach was chosen:
 Here are five German traffic signs that I found on the web:
 
 | ![](writeup_images/test01.jpg) | ![](writeup_images/test02.jpg) | ![](writeup_images/test03.jpg) | ![](writeup_images/test04.jpg) | ![](writeup_images/test05.jpg)
-| Slippery road | Priority road | Speed limit (60km/h) | Ahead only | Road work
+| General caution | Priority road | Speed limit (60km/h) | Ahead only | Road work
+
+- The 1st image may be difficult to classify because this is tilted. 
 
 #### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
 Here are the results of the prediction:
 
-| Image                | Prediction            |
-|:--------------------:|:---------------------:|
-| Slippery road        | Wild animals crossing |
-| Priority road        | Priority road         |
-| Speed limit (60km/h) | Speed limit (60km/h)  |
-| Ahead only           | Ahead only            |
-| Road work            | Road work             |
+| Image                | Prediction           |
+|:--------------------:|:--------------------:|
+| General caution      | General caution      |
+| Priority road        | Priority road        |
+| Speed limit (60km/h) | Speed limit (60km/h) |
+| Ahead only           | Ahead only           |
+| Road work            | Road work            |
 
-
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of 0.952
+The model was able to correctly guess 5 of the 5 traffic signs, which gives an accuracy of 1.00. This compares favorably to the accuracy on the test set of 0.951
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
@@ -209,15 +210,22 @@ with tf.Session() as sess:
                              feed_dict={x: test_images, keep_prob: 1.0, is_training: False})
 ```
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+For the first image, the model is almost sure that this is a general caution sign (probability of 0.98), and the image does contain a general caution sign. The top five soft max probabilities were
 
-| Probability | Prediction |
-|:-----------:|:---------------------------------------------:|
-| .24         | Wild animals crossing |
-| .22         | General Caution           |
-| .07         | Y            |
-| .06         | Bumpy Road                   |
-| .05         | Slippery Road                    |
+| Probability | Prediction           |
+|:-----------:|:--------------------:|
+| .98         | General caution      |
+| .01         | Traffic signals      |
+| .004        | Speed limit (70km/h) |
+| .002        | Bummy road           |
+| .0006       | Speed limit (80km/h) |
 
+For the second image, the model is almost sure that this is a priority road sign (probability of 0.997), and the image does contain a priority road sign. The top five soft max probabilities were
 
-For the second image ...
+| Probability | Prediction           |
+|:-----------:|:--------------------:|
+| .997        | Priority roda        |
+| .001        | Yield                |
+| .0008       | No entry             |
+| .0002       | Stop                 |
+| .0001       | Speed limit (60km/h) |
