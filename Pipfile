@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+
+[packages]
+jupyter = "*"
+matplotlib = "*"
+numpy = "*"
+opencv-python = "*"
+scikit-learn = "*"
+tensorflow-gpu = "*"
+tqdm = "*"
+
+[requires]
+python_version = "3.6"
